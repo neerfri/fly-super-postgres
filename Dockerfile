@@ -3,12 +3,12 @@
 #   pgvector, Apache AGE, pg_textsearch
 # Already included via postgresql-contrib: pg_trgm, ltree
 
-ARG PG_VERSION=18.4
-ARG PG_MAJOR_VERSION=18
+ARG PG_VERSION=17.4
+ARG PG_MAJOR_VERSION=17
 ARG VERSION=custom
 
-# Pin fly postgres-flex source (PR #296: PG18 support)
-ARG POSTGRES_FLEX_COMMIT=ee6264f343a8185d4a251972a51738ccd0dfa063
+# Pin fly postgres-flex source (latest release v0.0.66)
+ARG POSTGRES_FLEX_COMMIT=19b3e1311aca
 
 # Extension versions
 ARG PG_TEXTSEARCH_VERSION=0.5.1
@@ -16,7 +16,7 @@ ARG PG_TEXTSEARCH_VERSION=0.5.1
 # ---- Fetch postgres-flex source ----
 FROM alpine/git:2.47.2 AS source
 ARG POSTGRES_FLEX_COMMIT
-RUN git clone https://github.com/semoal/postgres-flex.git /src \
+RUN git clone https://github.com/fly-apps/postgres-flex.git /src \
     && cd /src && git checkout ${POSTGRES_FLEX_COMMIT}
 
 # ---- Go builder (same as upstream) ----
@@ -44,7 +44,7 @@ ARG PG_MAJOR_VERSION
 ARG PG_VERSION
 ARG PG_TEXTSEARCH_VERSION
 ARG POSTGIS_MAJOR=3
-ARG HAPROXY_VERSION=3.3
+ARG HAPROXY_VERSION=2.8
 ARG REPMGR_VERSION=5.5.0+debpgdg-3.pgdg24.04+1
 
 ENV PGDATA=/data/postgresql
@@ -104,10 +104,8 @@ RUN curl -fsSL -o /tmp/pg_textsearch.zip \
     && cp -r /tmp/pg_textsearch/* / \
     && rm -rf /tmp/pg_textsearch /tmp/pg_textsearch.zip
 
-# Haproxy (PG18 needs 3.3 via PPA)
-RUN apt-get update && apt-get install --no-install-recommends -y software-properties-common && \
-    add-apt-repository ppa:vbernat/haproxy-${HAPROXY_VERSION} && \
-    apt-get update && apt-get install --no-install-recommends -y \
+# Haproxy
+RUN apt-get update && apt-get install --no-install-recommends -y \
     haproxy=$HAPROXY_VERSION.\* \
     && apt autoremove -y && apt clean
 
