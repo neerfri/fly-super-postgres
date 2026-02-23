@@ -3,8 +3,8 @@
 #   pgvector, Apache AGE, pg_textsearch
 # Already included via postgresql-contrib: pg_trgm, ltree
 
-ARG PG_VERSION=17.2
-ARG PG_MAJOR_VERSION=17
+ARG PG_VERSION=18.4
+ARG PG_MAJOR_VERSION=18
 ARG VERSION=custom
 
 # Pin fly postgres-flex source
